@@ -125,7 +125,11 @@ export default function MeetingListPage() {
                                             key={meeting.id}
                                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                                         >
-                                            <td className="px-4 py-3 text-sm text-gray-800 font-medium">
+                                            {/* ← Title now clickable to detail page */}
+                                            <td
+                                                className="px-4 py-3 text-sm text-blue-700 font-medium cursor-pointer hover:underline"
+                                                onClick={() => navigate(`/meetings/${meeting.id}`)}
+                                            >
                                                 {meeting.title}
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-600">
@@ -133,10 +137,10 @@ export default function MeetingListPage() {
                                             </td>
                                             <td className="px-4 py-3 text-sm">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${meeting.status === "PUBLISHED"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : meeting.status === "DRAFT"
-                                                        ? "bg-yellow-100 text-yellow-700"
-                                                        : "bg-gray-100 text-gray-600"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : meeting.status === "DRAFT"
+                                                            ? "bg-yellow-100 text-yellow-700"
+                                                            : "bg-gray-100 text-gray-600"
                                                     }`}>
                                                     {meeting.status}
                                                 </span>

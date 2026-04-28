@@ -13,3 +13,5 @@ export const deleteMeeting = (id) => api.delete(`/minutes/${id}`);
 
 export const searchMeetings = (query, page = 0, size = 10) =>
     api.get(`/minutes/search?q=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+
+export const getStats = () => api.get("/api/meetings/stats");

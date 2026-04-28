@@ -4,15 +4,6 @@ export default {
         "./index.html",
         "./src/**/*.{js,jsx,ts,tsx}",
     ],
-    theme: {
-        extend: {
-            colors: {
-                primary: '#1B4F8A',
-            },
-            fontFamily: {
-                sans: ['Arial', 'sans-serif'],
-            },
-        },
-    },
+    theme: { extend: {} },
     plugins: [],
 }

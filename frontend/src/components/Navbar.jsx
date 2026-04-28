@@ -7,12 +7,20 @@ export default function Navbar() {
 
     return (
         <nav className="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow">
-            <span
-                className="font-bold text-lg cursor-pointer"
-                onClick={() => navigate("/")}
-            >
-                📋 Board Meeting Minutes
-            </span>
+            <div className="flex items-center gap-6">
+                <span
+                    className="font-bold text-lg cursor-pointer"
+                    onClick={() => navigate("/")}
+                >
+                    📋 Board Meeting Minutes
+                </span>
+                <button
+                    onClick={() => navigate("/dashboard")}
+                    className="text-sm text-blue-100 hover:text-white transition"
+                >
+                    Dashboard
+                </button>
+            </div>
             <div className="flex items-center gap-4">
                 <span className="text-sm text-blue-100">
                     {user?.username} {user?.role && `(${user.role})`}
