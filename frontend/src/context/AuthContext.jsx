@@ -1,7 +1,7 @@
 // AuthContext.jsx: React context providing authentication state, login/logout actions, and JWT decoding.
 // Wraps the app with AuthProvider; exposes useAuth() hook for consuming components.
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 
 const AuthContext = createContext(null);
 
@@ -26,23 +26,28 @@ function decodeJwt(token) {
 }
 
 export function AuthProvider({ children }) {
-  const [user,  setUser]  = useState(null);
-  const [token, setToken] = useState(null);
-
-  // ── Rehydrate from localStorage on first render ──────────────────────────
-  useEffect(() => {
+  const [token, setToken] = useState(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       const decoded = decodeJwt(savedToken);
       if (decoded && decoded.exp * 1000 > Date.now()) {
-        setToken(savedToken);
-        setUser(decoded);
-      } else {
-        // Token is expired — clear storage
-        localStorage.removeItem("token");
+        return savedToken;
+      }
+      localStorage.removeItem("token");
+    }
+    return null;
+  });
+
+  const [user, setUser] = useState(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      const decoded = decodeJwt(savedToken);
+      if (decoded && decoded.exp * 1000 > Date.now()) {
+        return decoded;
       }
     }
-  }, []);
+    return null;
+  });
 
   /**
    * Called on successful login.
@@ -78,6 +83,7 @@ export function AuthProvider({ children }) {
 /**
  * Hook to access authentication context from any component.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) {

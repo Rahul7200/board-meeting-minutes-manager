@@ -53,8 +53,8 @@ export default function AnalyticsPage() {
   const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     (async () => {
+      setLoading(true);
       try {
         const [trendRes, statsRes] = await Promise.allSettled([
           api.get("/minutes/analytics", { params: { period } }),

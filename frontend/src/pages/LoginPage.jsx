@@ -4,7 +4,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import api from "../services/api";
 
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
@@ -41,7 +40,7 @@ export default function LoginPage() {
       
       login(mockToken);
       navigate(from, { replace: true });
-    } catch (err) {
+    } catch {
       setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);

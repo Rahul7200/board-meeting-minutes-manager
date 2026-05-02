@@ -1,7 +1,4 @@
-// App.jsx: Root application component with React Router v6 routes and responsive sidebar layout.
-// All protected routes render inside a shared layout with brand-colored sidebar and logout button.
-
-import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -11,15 +8,15 @@ import MinutesList from "./pages/MinutesList";
 import MinutesForm from "./pages/MinutesForm";
 import MinutesDetail from "./pages/MinutesDetail";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import ApiDocsPage from "./pages/ApiDocsPage";
 
-// ── Navigation items ─────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { to: "/dashboard", label: "Dashboard",  icon: "📊" },
-  { to: "/minutes",   label: "Minutes",    icon: "📋" },
-  { to: "/analytics", label: "Analytics",  icon: "📈" },
+  { to: "/dashboard", label: "Dashboard", icon: "📊" },
+  { to: "/minutes", label: "Minutes", icon: "📋" },
+  { to: "/analytics", label: "Analytics", icon: "📈" },
+  { to: "/api-docs", label: "API Docs", icon: "📄" },
 ];
 
-// ── Sidebar layout component ─────────────────────────────────────────────────
 function AppLayout({ children }) {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,7 +24,6 @@ function AppLayout({ children }) {
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
 
-      {/* ── Mobile overlay ─────────────────────────────────────────────── */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-20 lg:hidden"
@@ -35,24 +31,23 @@ function AppLayout({ children }) {
         />
       )}
 
-      {/* ── Sidebar ────────────────────────────────────────────────────── */}
       <aside
         className={`
           fixed top-0 left-0 h-full z-30 flex flex-col
-          bg-brand-500 text-white
+          bg-blue-700 text-white
           transition-all duration-300 ease-in-out
           ${sidebarOpen ? "w-64" : "w-0 lg:w-16 xl:w-64"}
           overflow-hidden
         `}
       >
         {/* Brand header */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-brand-400 min-h-[64px]">
+        <div className="flex items-center gap-3 px-4 py-5 border-b border-blue-600 min-h-[64px]">
           <span className="text-2xl flex-shrink-0">🏛️</span>
-          <span className="xl:block hidden font-bold text-sm leading-tight whitespace-nowrap">
+          <span className="font-bold text-sm leading-tight whitespace-nowrap xl:block hidden">
             Board Minutes<br />
             <span className="font-normal text-blue-200">Manager</span>
           </span>
-          <span className="xl:hidden lg:hidden font-bold text-sm leading-tight whitespace-nowrap block">
+          <span className="font-bold text-sm leading-tight whitespace-nowrap xl:hidden block">
             Board Minutes<br />
             <span className="font-normal text-blue-200">Manager</span>
           </span>
@@ -80,19 +75,14 @@ function AppLayout({ children }) {
         </nav>
 
         {/* User + logout */}
-        <div className="border-t border-brand-400 px-3 py-4 space-y-2">
+        <div className="border-t border-blue-600 px-3 py-4 space-y-2">
           <div className="flex items-center gap-3 px-2 py-1 text-xs text-blue-200">
             <span className="text-lg">👤</span>
-            <span className="xl:block hidden truncate">{user?.sub ?? "User"}</span>
+            <span className="xl:block hidden truncate">{user?.username ?? user?.sub ?? "User"}</span>
           </div>
           <button
-            id="btn-logout"
             onClick={logout}
-            className="
-              flex items-center gap-3 w-full px-3 py-2.5 rounded-lg
-              text-sm font-medium text-red-200 hover:bg-red-500/20
-              transition-colors min-h-[44px]
-            "
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-200 hover:bg-red-500/20 transition-colors min-h-[44px]"
           >
             <span className="text-lg flex-shrink-0">🚪</span>
             <span className="xl:block hidden whitespace-nowrap">Sign Out</span>
@@ -101,15 +91,12 @@ function AppLayout({ children }) {
         </div>
       </aside>
 
-      {/* ── Main content area ───────────────────────────────────────────── */}
+      {/* Main content */}
       <div className="flex-1 flex flex-col lg:ml-16 xl:ml-64 min-w-0">
-        {/* Top bar */}
         <header className="flex items-center h-16 px-4 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
           <button
-            id="btn-toggle-sidebar"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            aria-label="Toggle sidebar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -121,7 +108,6 @@ function AppLayout({ children }) {
           </h1>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>
@@ -130,7 +116,6 @@ function AppLayout({ children }) {
   );
 }
 
-// ── Root App ─────────────────────────────────────────────────────────────────
 function App() {
   return (
     <AuthProvider>
@@ -139,39 +124,30 @@ function App() {
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Redirect root to dashboard */}
+          {/* Redirect root */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          {/* Protected routes — wrapped in sidebar layout */}
+          {/* Protected routes */}
           <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <AppLayout><Dashboard /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>
           } />
           <Route path="/minutes" element={
-            <ProtectedRoute>
-              <AppLayout><MinutesList /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><MinutesList /></AppLayout></ProtectedRoute>
           } />
           <Route path="/minutes/new" element={
-            <ProtectedRoute>
-              <AppLayout><MinutesForm /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><MinutesForm /></AppLayout></ProtectedRoute>
           } />
           <Route path="/minutes/:id" element={
-            <ProtectedRoute>
-              <AppLayout><MinutesDetail /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><MinutesDetail /></AppLayout></ProtectedRoute>
           } />
           <Route path="/minutes/:id/edit" element={
-            <ProtectedRoute>
-              <AppLayout><MinutesForm /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><MinutesForm /></AppLayout></ProtectedRoute>
           } />
           <Route path="/analytics" element={
-            <ProtectedRoute>
-              <AppLayout><AnalyticsPage /></AppLayout>
-            </ProtectedRoute>
+            <ProtectedRoute><AppLayout><AnalyticsPage /></AppLayout></ProtectedRoute>
+          } />
+          <Route path="/api-docs" element={
+            <ProtectedRoute><AppLayout><ApiDocsPage /></AppLayout></ProtectedRoute>
           } />
 
           {/* Catch-all */}

@@ -63,6 +63,7 @@ export default function MinutesList() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMinutes(0);
   }, [fetchMinutes]);
 
@@ -113,7 +114,7 @@ export default function MinutesList() {
 
       {/* Search & filter bar */}
       <SearchFilterBar
-        onResults={(results, _filters) => setSearchResults(results)}
+        onResults={(results) => setSearchResults(results)}
         onClear={() => setSearchResults(null)}
       />
 
